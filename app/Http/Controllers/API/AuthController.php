@@ -80,8 +80,10 @@ class AuthController extends Controller
         Log::info($credentials);
 
         if (Auth::attempt($credentials)) {
-            $user = Auth::user();
+            $user = User::find(Auth::id());
             $token = $user->createToken('auth_token');
+            $user->last_login_at = now();
+            $user->save();
 
             return response()->json([
                 'access_token' => $token->plainTextToken,
